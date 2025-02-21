@@ -21,23 +21,18 @@
         </java>
       </setBody>
 
-      <log message="NEW2 NEW2 ============================="/>
+      <log message="NEW2b NEW2 ============================="/>
     </route>
-    <route> 
-      
-      <from uri="file:src/data?noop=true"/>
-      <choice>
-        <when>
-          <xpath>/person/city = 'London'</xpath>
-          <log message="UK message"/>
-          <to uri="file:target/messages/uk"/>
-        </when>
-        <otherwise>
-          <log message="Other message"/>
-          <to uri="file:target/messages/others"/>
-        </otherwise>
-      </choice>
+
+    <route>
+      <from uri="jms:topic:STATUS"/>
+      <log message="STATUS ${body}"/>
     </route>
+
+
   </camelContext>
 
+  <bean id="jms" class="org.apache.camel.component.activemq.ActiveMQComponent">
+		<property name="brokerURL" value="tcp://10.0.250.126:61616"/>
+	</bean>
 </beans>
