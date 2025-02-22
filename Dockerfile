@@ -16,8 +16,6 @@ COPY src ./src
 # Build the project
 RUN mvn clean install
 
-RUN echo 'hello3'
-RUN ls -l /app/target
 
 # Use a smaller base image for the final image
 FROM openjdk:25-jdk-slim
@@ -29,10 +27,13 @@ WORKDIR /app
 COPY --from=build /app/target/camel-1.0-SNAPSHOT.jar app.jar
 # RUN mkdir lib
 COPY --from=build /app/target/lib/* lib/
+COPY start.sh .
 
-RUN ls -l lib
+COPY src/main/log4j2.xml .
+COPY data/camel-context.xml .
+RUN chmod +x ./start.sh
 RUN ls -l
 
 
 # # Command to run the application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+CMD ["./start.sh"]

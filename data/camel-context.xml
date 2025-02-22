@@ -33,6 +33,6 @@
   </camelContext>
 
   <bean id="jms" class="org.apache.camel.component.activemq.ActiveMQComponent">
-		<property name="brokerURL" value="tcp://10.0.250.126:61616"/>
+		<property name="brokerURL" value="tcp://amqc:61616"/>
 	</bean>
 </beans>
