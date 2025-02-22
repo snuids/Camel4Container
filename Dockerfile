@@ -34,6 +34,5 @@ COPY data/camel-context.xml .
 RUN chmod +x ./start.sh
 RUN ls -l
 
-
 # # Command to run the application
 CMD ["./start.sh"]
