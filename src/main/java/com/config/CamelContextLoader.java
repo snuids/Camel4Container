@@ -102,8 +102,15 @@ public class CamelContextLoader {
 
                 for (MBeanAttributeInfo attributeInfo : attributes) {
                     try {
+                        if (attributeInfo.getName().equals("RouteProperties")) {
+                            continue;
+                        }
                         Object attributeValue = mBeanServer.getAttribute(route, attributeInfo.getName());
-                        routeAttributes.put(attributeInfo.getName(), attributeValue);
+                        if (attributeValue != null && !attributeValue.toString().equals("")
+                                && !attributeValue.toString().equals("false")) {
+                            routeAttributes.put(attributeInfo.getName(), attributeValue);
+                        }
+
                     } catch (Exception e) {
                         routeAttributes.put(attributeInfo.getName(), "Failed to get attribute: " + e.getMessage());
                     }
@@ -112,15 +119,15 @@ public class CamelContextLoader {
                 routesList.add(routeAttributes);
             }
             ObjectMapper objectMapper = new ObjectMapper();
-                    String jsonString = objectMapper.writeValueAsString(routesList);
-                    System.out.println("Routes JSON: " + jsonString);
+            String jsonString = objectMapper.writeValueAsString(routesList);
+            //        System.out.println("Routes JSON: " + jsonString);
             ProducerTemplate producerTemplate = amq.getCamelContext().createProducerTemplate();
             producerTemplate.sendBody("jms:topic:ROUTE_STATUS", jsonString);
-            
+
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
+
         return routesList;
     }
 }
