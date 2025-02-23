@@ -8,6 +8,8 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <!-- <jmxAgent id="agent" statisticsLevel="RoutesOnly"/> -->
+    <jmxAgent id="agent"/>
     <!-- here is a sample which processes the input files
          (leaving them in place - see the 'noop' flag)
          then performs content based routing on the message using XPath -->
