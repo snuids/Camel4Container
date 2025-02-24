@@ -135,7 +135,7 @@ public class CamelContextLoader {
             Map<String,Object> headers = new HashMap<>();
             
             if (System.getenv().containsKey("camelName")) {
-                headers.put("camelName", System.getenv().get("name"));
+                headers.put("camelName", System.getenv().get("camelName"));
             }
             if (System.getenv().containsKey("serverId")) {
                 headers.put("serverId", System.getenv().get("serverId"));
