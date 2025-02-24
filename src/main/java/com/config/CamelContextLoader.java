@@ -134,11 +134,11 @@ public class CamelContextLoader {
             //producerTemplate.sendBody("jms:topic:ROUTE_STATUS", jsonString);
             Map<String,Object> headers = new HashMap<>();
             
-            if (System.getenv().containsKey("camelName")) {
-                headers.put("camelName", System.getenv().get("camelName"));
+            if (System.getenv().containsKey("workflow")) {
+                headers.put("workflow", System.getenv().get("workflow"));
             }
             else{
-                headers.put("camelName", "camelName not found.");
+                headers.put("workflow", "workflow not found.");
             }
             if (System.getenv().containsKey("serverId")) {
                 headers.put("serverId", System.getenv().get("serverId"));
