@@ -32,6 +32,12 @@ public class CamelContextLoader {
             System.out.println("Usage: java -jar <jarfile> path/to/camel-context.xml");
             System.exit(1);
         }
+
+        Map<String, String> env = System.getenv();
+        for (Map.Entry<String, String> entry : env.entrySet()) {
+            System.out.println(entry.getKey() + ": " + entry.getValue());
+        }
+
         String path = "file:" + args[0];
         Path filePath = Paths.get(args[0]);
 
@@ -114,6 +120,13 @@ public class CamelContextLoader {
                     } catch (Exception e) {
                         routeAttributes.put(attributeInfo.getName(), "Failed to get attribute: " + e.getMessage());
                     }
+                }
+
+                if (System.getenv().containsKey("name")) {
+                    routeAttributes.put("name", System.getenv().get("name"));
+                }
+                if (System.getenv().containsKey("serverId")) {
+                    routeAttributes.put("serverId", System.getenv().get("serverId"));
                 }
 
                 routesList.add(routeAttributes);

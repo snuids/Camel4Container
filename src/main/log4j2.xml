@@ -5,15 +5,25 @@
                    https://logging.apache.org/xml/ns
                    https://logging.apache.org/xml/ns/log4j-config-2.xsd">
   <Appenders>
-    <Console name="CONSOLE"> 
+    <Console name="CONSOLE">
       <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %p - %m%n"/>
     </Console>
-    <File name="MAIN" fileName="logs/main.log"> 
+    <RollingFile name="MAIN" fileName="logs/main.log"
+                 filePattern="logs/main-%d{yyyy-MM-dd}.log">
       <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %p - %m%n"/>
-    </File>
+      <Policies>
+        <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+      </Policies>
+      <DefaultRolloverStrategy max="10">
+        <Delete basePath="logs" maxDepth="1">
+          <IfFileName glob="main-*.log"/>
+          <IfLastModified age="10d"/>
+        </Delete>
+      </DefaultRolloverStrategy>
+    </RollingFile>
   </Appenders>
   <Loggers>
-    <Root level="INFO"> 
+    <Root level="INFO">
       <AppenderRef ref="CONSOLE" level="INFO"/>
       <AppenderRef ref="MAIN"/>
     </Root>
