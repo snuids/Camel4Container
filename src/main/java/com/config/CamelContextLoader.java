@@ -137,8 +137,14 @@ public class CamelContextLoader {
             if (System.getenv().containsKey("camelName")) {
                 headers.put("camelName", System.getenv().get("camelName"));
             }
+            else{
+                headers.put("camelName", "camelName not found.");
+            }
             if (System.getenv().containsKey("serverId")) {
                 headers.put("serverId", System.getenv().get("serverId"));
+            }
+            else{
+                headers.put("serverId", "serverId not found.");
             }
             producerTemplate.sendBodyAndHeaders("jms:topic:ROUTE_STATUS", jsonString, headers);
 
