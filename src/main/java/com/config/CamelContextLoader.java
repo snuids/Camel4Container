@@ -123,12 +123,7 @@ public class CamelContextLoader {
                     }
                 }
 
-                if (System.getenv().containsKey("name")) {
-                    routeAttributes.put("name", System.getenv().get("name"));
-                }
-                if (System.getenv().containsKey("serverId")) {
-                    routeAttributes.put("serverId", System.getenv().get("serverId"));
-                }
+                
 
                 routesList.add(routeAttributes);
             }
@@ -136,7 +131,16 @@ public class CamelContextLoader {
             String jsonString = objectMapper.writeValueAsString(routesList);
             //        System.out.println("Routes JSON: " + jsonString);
             ProducerTemplate producerTemplate = amq.getCamelContext().createProducerTemplate();
-            producerTemplate.sendBody("jms:topic:ROUTE_STATUS", jsonString);
+            //producerTemplate.sendBody("jms:topic:ROUTE_STATUS", jsonString);
+            Map<String,Object> headers = new HashMap<>();
+            
+            if (System.getenv().containsKey("camelName")) {
+                headers.put("camelName", System.getenv().get("name"));
+            }
+            if (System.getenv().containsKey("serverId")) {
+                headers.put("serverId", System.getenv().get("serverId"));
+            }
+            producerTemplate.sendBodyAndHeaders("jms:topic:ROUTE_STATUS", jsonString, headers);
 
         } catch (Exception e) {
             e.printStackTrace();
