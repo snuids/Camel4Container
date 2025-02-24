@@ -34,6 +34,8 @@ public class CamelContextLoader {
             System.exit(1);
         }
 
+        System.out.println("Hello Robert");
+
         Map<String, String> env = System.getenv();
         for (Map.Entry<String, String> entry : env.entrySet()) {
             System.out.println(entry.getKey() + ": " + entry.getValue());
