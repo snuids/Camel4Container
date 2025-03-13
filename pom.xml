@@ -71,7 +71,24 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-mail</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-quartz</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-management</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-language</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-javascript</artifactId>
     </dependency>
 
 <!-- OTHER-->
