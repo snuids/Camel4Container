@@ -8,8 +8,8 @@ FROM maven:3.9.9-amazoncorretto-23-alpine AS build
 # Copy the pom.xml and source code
 #COPY pom.xml .
 
-apt update
-apt install -y jq
+#apt update
+#apt install -y jq
 
 WORKDIR /app
 COPY pom.xml .
