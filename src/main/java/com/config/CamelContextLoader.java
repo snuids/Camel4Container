@@ -102,7 +102,7 @@ public class CamelContextLoader {
 
             for (ObjectName route : routes) {
                 Map<String, Object> routeAttributes = new HashMap<>();
-                routeAttributes.put("name", route.toString());
+                routeAttributes.put("name", route.getKeyProperty("name"));
 
                 // Get MBean info to retrieve all attributes
                 MBeanInfo mBeanInfo = mBeanServer.getMBeanInfo(route);
