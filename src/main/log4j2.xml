@@ -8,15 +8,15 @@
     <Console name="CONSOLE">
       <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %p - %m%n"/>
     </Console>
-    <RollingFile name="MAIN" fileName="logs/main.log"
-                 filePattern="logs/main-%d{yyyy-MM-dd}.log">
+    <RollingFile name="MAIN" fileName="/tmp/logs/mainama.log"
+                 filePattern="/tmp/logs/mainama-%d{yyyy-MM-dd}.log">
       <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %p - %m%n"/>
       <Policies>
         <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
       </Policies>
       <DefaultRolloverStrategy max="10">
         <Delete basePath="logs" maxDepth="1">
-          <IfFileName glob="main-*.log"/>
+          <IfFileName glob="mainama-*.log"/>
           <IfLastModified age="10d"/>
         </Delete>
       </DefaultRolloverStrategy>
