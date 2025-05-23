@@ -35,8 +35,16 @@ import com.equans.camel.component.pubsub.PubSubComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.apache.camel.component.activemq.ActiveMQComponent;
+import org.apache.activemq.ActiveMQConnectionFactory;
+
 public class CamelWorker {
     static final Logger logger = LoggerFactory.getLogger("CamelWorker");
+    
+    ActiveMQComponent   amqc;
+    String t;
+    org.apache.activemq.ActiveMQConnectionFactory t2;
+
     
     public static final String version = "2.0.0";
     public static String camelVersion = "NA";    
