@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>APSB SQL</title>
+
+        <!--script type="text/javascript" src="DataTables-1.9.4/media/js/jquery.js"></script>
+        <script type="text/javascript" src="DataTables-1.9.4/media/js/jquery.dataTables.js"></script>
+        
+        <link rel="stylesheet" type="text/css" href="./DataTables-1.9.4/media/css/demo_page.css"> 
+        <link rel="stylesheet" type="text/css" href="./DataTables-1.9.4/media/css/demo_table.css"--> 
+
+        <style type="text/css" title="currentStyle">
+			@import "./media/css/demo_page.css";
+			@import "./media/css/jquery.dataTables.css";
+		</style>
+	<script type="text/javascript" language="javascript" src="./media/js/jquery.js"></script>
+	<script type="text/javascript" language="javascript" src="./media/js/jquery.dataTables.js"></script>
+        
+        
+        <!--script type="text/javascript" src="jquery-1.8.3.js"></script-->
+        <link rel="stylesheet" type="text/css" href="jquery-ui-1.9.2.custom/css/base/jquery-ui.css"> 
+        <script type="text/javascript" src="jquery-ui-1.9.2.custom/js/jquery-ui-1.9.2.custom.js"></script>
+	<script type="text/javascript" src="./JScripts/broker.js"></script>
+	<script type="text/javascript" src="./JScripts/sql.js"></script>
+
+        
+        
+        <!--link rel="stylesheet" type="text/css" href="./DataTables-1.9.4/media/css/demo_page.css"--> 
+
+        <style type="text/css">
+            .sqlerror
+            {
+                background-color: Red;
+                color:White;
+            }
+            /*table
+            {
+            border-collapse:collapse;
+            }
+            table, td, th
+            {
+            border:1px solid black;
+            }*/
+            
+            .sqlheader
+            {
+                overflow:hidden;
+            }
+            
+            .sqlresultcontent
+            {
+                font-size:70%;
+                /*border:solid 1px #888;*/
+                overflow:auto;
+            }
+            
+            .ui-widget 
+            {
+                font-size:70%;
+            }
+            .dialog_form th {
+                text-align: left;
+            }
+
+            .dialog_form textarea, .dialog_form input[type=text] {
+                width: 520px;
+            }
+
+
+            #dialog_window_minimized_container {
+                position: fixed;
+                bottom: 0px;
+                left: 0px;
+            }
+
+            .dialog_window_minimized {
+                float: left;
+                padding: 5px 10px;
+                font-size: 12px;
+                cursor: pointer;
+                margin-right: 2px;
+                display: none;
+            }
+
+            .dialog_window_minimized .ui-icon {
+                display: inline-block !important;
+                position: relative;
+                top: 3px;
+                cursor: pointer;
+            }
+
+            .ui-dialog .ui-dialog-titlebar-minimize {
+                height: 18px;
+                width: 19px;
+                padding: 1px;
+                position: absolute;
+                right: 23px;
+                top: 9px;
+            }
+
+            .ui-dialog .ui-dialog-titlebar-minimize .ui-icon {
+                display: block;
+                margin: 1px;
+            }
+
+            .ui-dialog .ui-dialog-titlebar-minimize:hover, .ui-dialog .ui-dialog-titlebar-minimize:focus {
+                padding: 0;
+            }
+
+
+        </style>
+        <!--link rel="stylesheet" type="text/css" href="tablestyle.css"--> 
+
+        <script type="text/javascript">
+            var _init = $.ui.dialog.prototype._init;
+            $.ui.dialog.prototype._init = function() {
+                _init.apply(this, arguments);
+			
+                var dialog_element = this;
+                var dialog_id = this.uiDialogTitlebar.next().attr('id');
+			
+                this.uiDialogTitlebar.append('<a href="#" id="' + dialog_id + 
+                    '-minbutton" class="ui-dialog-titlebar-minimize ui-corner-all">'+
+                    '<span class="ui-icon ui-icon-minusthick"></span></a>');
+			
+                $('#dialog_window_minimized_container').append(
+                '<div class="dialog_window_minimized ui-widget ui-state-default ui-corner-all" id="' + 
+                    dialog_id + '_minimized">' + this.uiDialogTitlebar.find('.ui-dialog-title').text() + 
+                    '<span class="ui-icon ui-icon-newwin"></div>');
+				
+                $('#' + dialog_id + '-minbutton').hover(function() {
+                    $(this).addClass('ui-state-hover');
+                }, function() {
+                    $(this).removeClass('ui-state-hover');
+                }).click(function() {
+                    dialog_element.close();
+                    $('#' + dialog_id + '_minimized').show();
+                });
+			
+                $('#' + dialog_id + '_minimized').click(function() {
+                    $(this).hide();
+                    dialog_element.open();
+                });
+            };
+
+            $(document).ready(function() 
+            {
+                
+
+                $('#create_newwindow_button').button().click(function() {
+					
+                    var div_count = $('.dialog_window').length + 1;
+                    var div_id = 'dialog_window_' + div_count;
+                    var div_title = "SQL Prompt ("+(div_count)+")";
+                    var div_content = "";
+                    var sqlarea_id = 'sql_' + div_count;
+                    var sqlresult_id = 'sqlres_' + div_count;
+                    div_content="<div class='sqlheader'><textarea id='"+sqlarea_id+"' rows='4' cols='50' width='100%'>select * from inductions</textarea></div>";
+                    
+
+                    div_content+="<div id='"+sqlresult_id+"' class='sqlresultcontent'></div>"
+//                    alert(sqlresult_id);
+                    var buttons = new Array();
+                    buttons.push({
+                        text: 'COMPUTE',
+                        click: function() {
+                           //alert('ALERTING from Dialog Window: ' + div_count+
+                           //"=>"+$('#sql_'+div_count).val());
+                           sendSql(div_count,$('#sql_'+div_count).val());
+                        }
+                     });
+
+                    $('body').append('<div class="dialog_window" id="' + div_id + '">' + div_content + '</div>');
+
+                    var dialog = $('#' + div_id).dialog({
+                        width: 600,
+                        height: 400,
+                        title : div_title,
+                        autoOpen : true,
+                        buttons: buttons
+                    });
+					
+                });
+                
+				
+                
+                $('#buttonlist').buttonset();
+            });
+
+        </script>
+    </head>
+    <body>
+	
+        <div id="dialog_window_minimized_container"></div>
+        <div id="dialog_window_1" class="dialog_window" title="SQL Window">            
+        </div>
+        <button id="create_newwindow_button">New SQL Prompt</button>				               
+        
+    </body>
+
+
+</html>

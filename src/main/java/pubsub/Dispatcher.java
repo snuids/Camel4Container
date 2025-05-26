@@ -86,6 +86,7 @@ public class Dispatcher implements Processor {
     LinkedHashMap<String, String> singletonsWithoutHistory = new LinkedHashMap<String, String>();
 
     int serverID;
+    String serverIDStr;
     int statusInterval;
     Connection connection = null;
     
@@ -207,6 +208,8 @@ public class Dispatcher implements Processor {
         this.serverID = serverID;
     }
 
+
+    
     public String getSingletonTopics() {
         return singletonTopics;
     }
@@ -518,9 +521,12 @@ public class Dispatcher implements Processor {
 
         File theDir = new File(directoryname);
 
-        for (String sing : this.singletonTopicsNoHistory.split(",")) {
-            if (sing.length() > 0) {
-                singletonsWithoutHistory.put(sing, sing);
+        if(this.singletonTopicsNoHistory != null )
+        {
+            for (String sing : this.singletonTopicsNoHistory.split(",")) {
+                if (sing.length() > 0) {
+                    singletonsWithoutHistory.put(sing, sing);
+                }
             }
         }
 

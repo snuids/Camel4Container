@@ -41,21 +41,19 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 public class CamelWorker {
     static final Logger logger = LoggerFactory.getLogger("CamelWorker");
     
-    ActiveMQComponent   amqc;
-    String t;
-    org.apache.activemq.ActiveMQConnectionFactory t2;
-
     
-    public static final String version = "2.0.0";
+    public static final String version = "2.0.1";
     public static String camelVersion = "NA";    
     public static ApplicationContext context;
+    public static String apsbPropertiesFile= null;
+    
     public static void main(String[] args) {
         if (args.length < 1) {
             logger.info("Usage: java -jar <jarfile> path/to/camel-context.xml");
             System.exit(1);
         }
 
-        logger.info("SJDKSKJDKSJDK $$$$$$$$$$$$$$$$$$$$$$$$$");
+        logger.info("Camel Runner Version "+version);
 
         Map<String, String> env = System.getenv();
         for (Map.Entry<String, String> entry : env.entrySet()) {
@@ -73,7 +71,29 @@ public class CamelWorker {
         // Get the Camel context from the Spring context
         CamelContext camelContext = applicationContext.getBean(CamelContext.class);
         camelVersion = camelContext.getVersion();
-        org.apache.camel.component.activemq.ActiveMQComponent amq = applicationContext.getBean(org.apache.camel.component.activemq.ActiveMQComponent.class);
+        org.apache.camel.component.activemq.ActiveMQComponent  amq=null;
+        
+        org.apache.camel.component.properties.PropertiesComponent props=null;
+        
+        try
+        {
+            props=applicationContext.getBean(org.apache.camel.component.properties.PropertiesComponent.class);
+            String propLocation=props.getLocations().get(0);
+            
+            CamelWorker.apsbPropertiesFile=propLocation.replace("file:", "");
+            logger.info("APSB Properties:"+CamelWorker.apsbPropertiesFile);
+        }
+        catch(Exception e)
+        {
+            logger.info(e.getMessage(),e);
+        }
+        try{
+            amq = applicationContext.getBean(org.apache.camel.component.activemq.ActiveMQComponent.class);            
+        }
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(),e);
+        }
 
         try {
             logger.info("Setting PubSub Camel Version...");
@@ -96,7 +116,15 @@ public class CamelWorker {
             logger.info("Error while setting PubSub Camel version.");
         }
 
-        
+        try{
+            pubsub.Dispatcher pDisp = applicationContext.getBean(pubsub.Dispatcher.class);            
+            if(pDisp!=null)
+                pDisp.startPubSub();
+        }
+        catch(Exception e)
+        {
+            logger.error(e.getMessage(),e);
+        }
         try {
             // Start the Camel context
             camelContext.start();
@@ -238,6 +266,11 @@ public class CamelWorker {
                 logger.info("File not found. Trying container location.");
                 curfile = new File("./conf" + File.separatorChar + propFileName);
                 logger.info("Checking APSB.properties in the following folder:" + curfile.getAbsolutePath());
+                if(!curfile.exists())
+                {
+                    curfile = new File(CamelWorker.apsbPropertiesFile);    
+                    logger.info("Checking APSB.properties in the following folder:" + CamelWorker.apsbPropertiesFile);
+                }
             }
             
             InputStream inputStream = new FileInputStream(curfile);

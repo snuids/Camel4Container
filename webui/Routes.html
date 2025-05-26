@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>APSB Routes</title>
+        
+        <!--script type="text/javascript" src="DataTables-1.9.4/media/js/jquery.js"></script>
+        <script type="text/javascript" src="DataTables-1.9.4/media/js/jquery.dataTables.js"></script>
+        
+        <link rel="stylesheet" type="text/css" href="./DataTables-1.9.4/media/css/demo_page.css"> 
+        <link rel="stylesheet" type="text/css" href="./DataTables-1.9.4/media/css/demo_table.css"--> 
+        
+        
+        <script type="text/javascript" src="jquery-1.8.3.js"></script>
+        <link rel="stylesheet" type="text/css" href="jquery-ui-1.9.2.custom/css/base/jquery-ui.css"/> 
+        <script type="text/javascript" src="jquery-ui-1.9.2.custom/js/jquery-ui-1.9.2.custom.js"></script>
+        
+        <!--link rel="stylesheet" type="text/css" href="./DataTables-1.9.4/media/css/demo_page.css"--> 
+        
+        <style type="text/css">
+            * {
+                margin: 0;
+                padding: 0;
+            }
+            
+            
+            
+            .ui-widget 
+            {
+                font-size:80%;
+            }
+
+            table a:link {
+	color: #666;
+	font-weight: bold;
+	text-decoration:none;
+}
+table a:visited {
+	color: #999999;
+	font-weight:bold;
+	text-decoration:none;
+}
+table a:active,
+table a:hover {
+	color: #bd5a35;
+	text-decoration:underline;
+}
+table {
+	font-family:Arial, Helvetica, sans-serif;
+	color:#666;
+	font-size:12px;
+	text-shadow: 1px 1px 0px #fff;
+	background:#eaebec;
+	margin:0px;
+	border:#ccc 1px solid;
+
+	-moz-border-radius:3px;
+	-webkit-border-radius:3px;
+	border-radius:3px;
+
+	-moz-box-shadow: 0 1px 2px #d1d1d1;
+	-webkit-box-shadow: 0 1px 2px #d1d1d1;
+	box-shadow: 0 1px 2px #d1d1d1;
+}
+table th {
+	padding:11px 15px 12px 15px;
+	border-top:1px solid #fafafa;
+	border-bottom:1px solid #e0e0e0;
+
+	background: #ededed;
+	background: -webkit-gradient(linear, left top, left bottom, from(#ededed), to(#ebebeb));
+	background: -moz-linear-gradient(top,  #ededed,  #ebebeb);
+}
+table th:first-child {
+	text-align: left;
+	padding-left:20px;
+}
+table tr:first-child th:first-child {
+	-moz-border-radius-topleft:3px;
+	-webkit-border-top-left-radius:3px;
+	border-top-left-radius:3px;
+}
+table tr:first-child th:last-child {
+	-moz-border-radius-topright:3px;
+	-webkit-border-top-right-radius:3px;
+	border-top-right-radius:3px;
+}
+table tr {
+	text-align: center;
+	padding-left:20px;
+}
+table td:first-child {
+	text-align: left;
+	padding-left:20px;
+	border-left: 0;
+}
+table td {
+	padding:8px;
+	border-top: 1px solid #ffffff;
+	border-bottom:1px solid #e0e0e0;
+	border-left: 1px solid #e0e0e0;
+
+	background: #fafafa;
+	background: -webkit-gradient(linear, left top, left bottom, from(#fbfbfb), to(#fafafa));
+	background: -moz-linear-gradient(top,  #fbfbfb,  #fafafa);
+}
+table tr.even td {
+	background: #f6f6f6;
+	background: -webkit-gradient(linear, left top, left bottom, from(#f8f8f8), to(#f6f6f6));
+	background: -moz-linear-gradient(top,  #f8f8f8,  #f6f6f6);
+}
+table tr:last-child td {
+	border-bottom:0;
+}
+table tr:last-child td:first-child {
+	-moz-border-radius-bottomleft:3px;
+	-webkit-border-bottom-left-radius:3px;
+	border-bottom-left-radius:3px;
+}
+table tr:last-child td:last-child {
+	-moz-border-radius-bottomright:3px;
+	-webkit-border-bottom-right-radius:3px;
+	border-bottom-right-radius:3px;
+}
+table tr:hover td {
+	background: #f2f2f2;
+	background: -webkit-gradient(linear, left top, left bottom, from(#f2f2f2), to(#f0f0f0));
+	background: -moz-linear-gradient(top,  #f2f2f2,  #f0f0f0);	
+}
+            .routestate_Started
+            {                
+                background-color: #0C0;
+                color:#fff;
+                text-shadow:none;
+                padding: 3px;
+            }
+            
+            .routestate_Suspended
+            {                
+                background-color: #F80;
+                color:#fff;
+                text-shadow:none;
+                padding: 3px;
+            }
+            .routestate_Updating
+            {                
+                background-color: #888;
+                color:#fff;
+                text-shadow:none;
+                padding: 3px;
+            }
+            .routestate_Stopped
+            {                
+                background-color: #F00;
+                color:#fff;
+                text-shadow:none;
+                padding: 3px;
+            }
+
+        </style>
+        <!--link rel="stylesheet" type="text/css" href="tablestyle.css"--> 
+        
+        <script type="text/javascript">
+            var selectedid='';
+            var full='';
+            var selectedroute='';
+            var lastrouteupdated;
+            var lastrouteupdatetime;
+            var lastdata='';
+            
+            $(function() {
+                $( "input[type=submit], a, button" )
+                  .button()
+                  .click(function( event ) {
+                    event.preventDefault();
+                  });
+              });
+            
+            $(document).ready(function () 
+            {   
+                
+                $( "#dialog-modal" ).dialog({ 
+                                    autoOpen: false,
+                                    title:'Edit route',
+                                    
+                                    width:400,
+                                    height: 140,
+                                    resizable:false,
+                                    modal: true});//.hide();
+                getNewData();
+                
+            });
+
+            function jmxChanged() {
+                selectedid = $("#clientscombo").val();
+            }
+
+            function modifyRoute(command)
+            {
+                $.ajax({
+                    type: 'GET',
+                    url: '/COMMANDROUTE?',
+                    data:"command="+command+"&r="+Math.random()+"&client=" + selectedid + "&route=" + selectedroute,
+                    success:function(data)
+                    {                        
+                        lastrouteupdated=selectedroute;
+                        lastrouteupdatetime=new Date(new Date().getTime()+5000);
+                        handleNewData(lastdata);
+                        $( "#dialog-modal" ).dialog("close");
+                    },
+                    error:function()
+                    {
+                        alert('error');
+                    }
+                });
+            }
+            
+            
+            
+            function showDialogControl(id)
+            {          
+                $.each(full.clients, function(i, item) 
+                {            
+                    
+                    if(selectedid==item.id)
+                    {
+                        $.each(item.data.Routes, function(i, item2) 
+                        {
+                            if(item2.id==id)
+                            {
+                                selectedroute=id;
+
+                                if(item2.state=="Started")
+                                {
+                                    $( "#resumebutton" ).hide();
+                                    $( "#suspendbutton" ).show();
+                                }
+                                else
+                                {
+                                    $( "#resumebutton" ).show();
+                                    $( "#suspendbutton" ).hide();
+
+                                }
+                                //$( "#dialog-modal" ).dialog("open");
+                                $( "#dialog-modal" ).dialog({
+                                    title:'Route:'+id,
+                                    width:400,
+                                    height: 140,
+                                    resizable:false,
+                                    modal: true
+                                });
+                                $( "#dialog-modal" ).dialog("open");
+                                return;
+                            }
+                        });
+                    }
+                });
+                
+                
+            }
+            
+            function getNewData()
+            {
+                //			console.log("'/PUBSUBCMD?ID='"+cursecond);
+                $.ajax({
+                    type: 'GET',
+                    url: '/SHOWROUTE?R='+Math.random(),			  
+                    success:function(data)
+                    {
+                        //console.log(data);
+                        //alert('success'+data);
+                        lastdata=data;
+                        handleNewData(data);
+                        setTimeout("getNewData()", 2000);
+                    },
+                    error:function()
+                    {
+                        alert('error');
+                    }
+                });			
+            }
+            
+            function handleNewData(data)
+            {
+                var options = $("#clientscombo");
+                full=eval('('+data+')');
+                                           
+                if(selectedid=='')
+                {
+                    $.each(full.clients, function(i, item) 
+                    {            
+                        if((i==0)&&(selectedid==''))
+                            selectedid=item.id;
+                        options.append($("<option />").val(item.id).text(item.id));
+                    });
+                }
+                
+                var table="<table width='100%' class='table'>";
+                $.each(full.clients, function(i, item) 
+                {      
+                    if(selectedid==item.id)
+                    {
+                        table+="<tr>";
+                            table+="<th>ID";
+                            table+="</th>";
+                            table+="<th>State";
+                            table+="</th>";
+                            table+="<th>Ok";
+                            table+="</th>";
+                            table+="<th>Ko";
+                            table+="</th>";
+                            table+="<th>Total";
+                            table+="</th>";
+                            table+="<th>Proc Time";
+                            table+="</th>";
+                            table+="<th>Last Time";
+                            table+="</th>";
+                            table+="<th>Total Time";
+                            table+="</th>";
+                            table+="<th>First Exchange";
+                            table+="</th>";
+                            table+="<th>Last Exchange";
+                            table+="</th>";
+                        table+="</tr>";
+                        
+                        $.each(item.data.Routes, function(i, item2) 
+                        {
+                            table+="<tr onclick=\"showDialogControl('"+item2.id+"');\">";
+                                table+="<td>";
+                                table+="<span title='"+item2.id+"'>"+item2.id+"</span>";                                
+                                table+="</td>";
+                                if((lastrouteupdated==item2.id)&&
+                                (lastrouteupdatetime>new Date()))
+                                {
+                                    table+="<td><span class='routestate_Updating'>";
+                                    table+="Updating";                                
+                                    table+="</span></td>";
+                                }
+                                else
+                                {
+                                    table+="<td><span class='routestate_"+item2.state+"'>";
+                                    table+=item2.state;                                
+                                    table+="</span></td>";
+                                }
+                                table+="<td>";
+                                table+=item2.exchangesCompleted;                                
+                                table+="</td>";
+                                table += "<td>";
+                                if(item2.exchangesFailed==0)
+                                    table += item2.exchangesFailed;
+                                else
+                                    table += "<span style='color:red;font-weight:bolder;'>" + item2.exchangesFailed + "</span>";                                
+                                table+="</td>";
+                                table+="<td>";
+                                table+=item2.totalExchanges;                                
+                                table+="</td>";
+                                table+="<td>";
+                                table+=item2.minProcessingTime+"/"+item2.meanProcessingTime+"/"+item2.maxProcessingTime+" ms";                                
+                                table+="</td>";
+                                table+="<td>";
+                                table+=item2.lastProcessingTime+" ms";                                
+                                table+="</td>";
+                                table+="<td>";
+                                table+=item2.totalProcessingTime+" s";                                
+                                table+="</td>";
+                                table+="<td>";
+                                if(item2.firstExchangeCompletedTimestamp!=undefined)
+                                    table+=item2.firstExchangeCompletedTimestamp;                                
+                                table+="</td>";
+                                table+="<td>";
+                                if(item2.lastExchangeCompletedTimestamp!=undefined)
+                                    table+=item2.lastExchangeCompletedTimestamp;                                
+                                table+="</td>";
+                            table+="</tr>";
+                        });
+                        table += "</table>";    
+                    }
+                    
+                });
+                //alert(table);
+                $('#routetable').html(table);
+    
+                /*mydata=[
+                        
+                        [ "Triden2", "Internet Explorer 4.0", new Date(), 4, "X" ],
+                        [ "Trident", "Internet Explorer 5.0", "Win 95+", 5, "C" ],
+                        [ "Trident", "Internet Explorer 5.5", "Win 95+", 5.5, "A" ],
+                        [ "Trident", "Internet Explorer 6.0", "Win 98+", 6, "A" ],
+                        [ "Trident", "Internet Explorer 7.0", "Win XP SP2+", 7, "A" ],
+                        [ "Gecko", "Firefox 1.5", "Win 98+ / OSX.2+", 1.8, "A" ],
+                        [ "Gecko", "Firefox 2", "Win 98+ / OSX.2+", 1.8, "A" ],
+                        [ "Gecko", "Firefox 3", "Win 2k+ / OSX.3+", 1.9, "A" ],
+                        [ "Webkit", "Safari 1.2", "OSX.3", 125.5, "A" ],
+                        [ "Webkit", "Safari 1.3", "OSX.3", 312.8, "A" ],
+                        [ "Webkit", "Safari 2.0", "OSX.4+", 419.3, "A" ],
+                        [ "Webkit", "Safari 3.0", "OSX.4+", 522.1, "A" ]];
+
+                $('#routetable').dataTable( {
+                    "aaData": mydata
+                    ,
+                    "aoColumns": [
+                        { "sTitle": "Engine" },
+                        { "sTitle": "Browser" },
+                        { "sTitle": "Platform" },
+                        { "sTitle": "Version", "sClass": "center" },
+                        { "sTitle": "Grade", "sClass": "center" }
+                    ]
+                } ); */  
+
+                
+                
+                
+            }
+        </script>
+    </head>
+    <body>
+        <h1>&nbsp;APSB Routes</h1>
+        
+        <div style="position:absolute;right:10px;top:10px">Client:&nbsp;<select id="clientscombo" onchange='jmxChanged();'></select></div>
+        
+        
+        <div id="routetable" class="display" style="position:absolute;left:10px;right:10px;top:40px;bottom:20px;">
+        </div>
+        
+        
+        <div id="dialog-modal" title="Basic modal dialog">
+            <p>Choose one of the following operation.</p>
+            <div style="position:absolute;bottom:10px;right:10px;;text-align: right;">
+            
+            <button onclick="modifyRoute('reset');">Reset Stats</button>
+            <button onclick="modifyRoute('resume');" id="resumebutton">Resume</button>
+            <button onclick="modifyRoute('suspend');" id="suspendbutton">Suspend</button>
+            
+            </div>
+        </div>
+    </body>
+
+</html>

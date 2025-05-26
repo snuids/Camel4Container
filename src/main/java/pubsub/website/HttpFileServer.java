@@ -221,7 +221,7 @@ public class HttpFileServer implements MessageListener {
                         JSONObject onemes = new JSONObject();
                         onemes.put("Message", mes.Message);
                         onemes.put("PubSubID", mes.PubSubID);
-                        if (mes.ClientName.length() > 0) {
+                        if (mes.ClientName!=null && mes.ClientName.length() > 0) {
                             onemes.put("ClientName", mes.ClientName);
                         }
                         meslist.add(onemes);
@@ -278,9 +278,10 @@ public class HttpFileServer implements MessageListener {
                 }
                 String pubsubid = mes.getStringProperty("PubSubID");
                 if (pubsubid == null) {
-                    pubsubid = mes.getStringProperty("PubSubID");
+                    pubsubid = "0";
                 }
-
+                
+                
                 // Appel de la méthode AddOneValue pour ajouter un message
                 curr.AddOneValue(destination, pubsubid, mes.getStringProperty("ClientName"), MessageAsText);
 
