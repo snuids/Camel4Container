@@ -12,7 +12,7 @@
             <properties>
                 <exec.vmArgs>-Dlog4j.configuration=file:/Users/snuids/Documents/GitHub/Camel4Container/data/log4j.properties -Dlog4j.debug=true</exec.vmArgs>
                 <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
-                <exec.appArgs>/Users/snuids/ICTCS/APSB/Configs/APSB.xml</exec.appArgs>
+                <exec.appArgs>/Users/snuids/ICTCS/APSB/Configs/APSB2.xml</exec.appArgs>
                 <exec.mainClass>${packageClassName}</exec.mainClass>
                 <exec.executable>java</exec.executable>
             </properties>
@@ -29,7 +29,7 @@
             <properties>
                 <exec.vmArgs>-Dlog4j.configuration=file:/Users/snuids/Documents/GitHub/Camel4Container/data/log4j.properties -Dlog4j.debug=true -agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address}</exec.vmArgs>
                 <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
-                <exec.appArgs>/Users/snuids/ICTCS/APSB/Configs/APSB.xml</exec.appArgs>
+                <exec.appArgs>/Users/snuids/ICTCS/APSB/Configs/APSB2.xml</exec.appArgs>
                 <exec.mainClass>${packageClassName}</exec.mainClass>
                 <exec.executable>java</exec.executable>
                 <jpda.listen>true</jpda.listen>
@@ -49,7 +49,7 @@
                 <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
                 <exec.mainClass>${packageClassName}</exec.mainClass>
                 <exec.executable>java</exec.executable>
-                <exec.appArgs>/Users/snuids/ICTCS/APSB/Configs/APSB.xml</exec.appArgs>
+                <exec.appArgs>/Users/snuids/ICTCS/APSB/Configs/APSB2.xml</exec.appArgs>
             </properties>
         </action>
     </actions>

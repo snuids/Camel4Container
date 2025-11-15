@@ -92,7 +92,8 @@ public class CamelWorker {
         }
         catch(Exception e)
         {
-            logger.error(e.getMessage(),e);
+            logger.info("No ActiveMQ component found.");
+            //logger.error(e.getMessage(),e);
         }
 
         try {
@@ -123,7 +124,8 @@ public class CamelWorker {
         }
         catch(Exception e)
         {
-            logger.error(e.getMessage(),e);
+            logger.info("No PubSun Dispatcher defined.");
+            //logger.error(e.getMessage(),e);
         }
         try {
             // Start the Camel context
