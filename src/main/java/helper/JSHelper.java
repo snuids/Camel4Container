@@ -497,44 +497,48 @@ public class JSHelper implements Processor {
         return jsonArray.toJSONString();
     }
 
-    public void checkCache()
+    public void checkCache() 
     {
-        long now=Calendar.getInstance().getTimeInMillis();
-        if(now>nextCheck.getTime())
+        
+        synchronized(this.cache)
         {
-            logger.info("Cleaning cache.");
-            try
+            long now=Calendar.getInstance().getTimeInMillis();
+            if(now>nextCheck.getTime())
             {
-                nextCheck=new Date(now+(long)(60000*10));
-
-                ArrayList<String> keys=new ArrayList<String>();
-                for ( Map.Entry<String, CachePair> entry : cache.entrySet() ) 
+                logger.info("Cleaning cache.");
+                try
                 {
-                    String key = entry.getKey();
-                    CachePair value = entry.getValue();
-                    if(value.removeTime!=null)
+                    nextCheck=new Date(now+(long)(60000*10));
+
+                    ArrayList<String> keys=new ArrayList<String>();
+                    for ( Map.Entry<String, CachePair> entry : cache.entrySet() ) 
                     {
-                        if(value.removeTime.getTime()<now)
+                        String key = entry.getKey();
+                        CachePair value = entry.getValue();
+                        if(value.removeTime!=null)
                         {
-                            logger.info("Removing key:"+key);
-                            keys.add(key);
+                            if(value.removeTime.getTime()<now)
+                            {
+                                logger.info("Removing key:"+key);
+                                keys.add(key);
+                            }
                         }
                     }
-                }
-                if(keys.size()>0)
-                {
-                    logger.info("Removing "+keys.size()+" key(s).");
-                    for(String key:keys)
+                    if(keys.size()>0)
                     {
-                        cache.remove(key);
-                    }
-                    logger.info("Cache size: "+cache.size());
+                        logger.info("Removing "+keys.size()+" key(s).");
+                        for(String key:keys)
+                        {
+                            cache.remove(key);
+                        }
+                        logger.info("Cache size: "+cache.size());
 
+                    }
                 }
-            }
-            catch(Exception e)
-            {
-                logger.error("Unable to clean cache. Ex="+e.getMessage(),e);
+                catch(Exception e)
+                {
+                    logger.error("Unable to clean cache. Ex="+e.getMessage(),e);
+                }
             }
         }
     }
@@ -543,18 +547,20 @@ public class JSHelper implements Processor {
      * **** cache method *****
      */
     public void cache(String key, Object msg,int TimeToLive) {
-        
-        if(TimeToLive<=0)
+        synchronized(this.cache)
         {
-            cache(key,msg);
-        }
-        else
-        {
-            Calendar date = Calendar.getInstance();
-            CachePair   cpair=new CachePair();
-            cpair.object=msg;
-            cpair.removeTime=new Date(Calendar.getInstance().getTimeInMillis()+(60000*(long)TimeToLive));
-            this.cache.put(key, cpair);
+            if(TimeToLive<=0)
+            {
+                cache(key,msg);
+            }
+            else
+            {
+                Calendar date = Calendar.getInstance();
+                CachePair   cpair=new CachePair();
+                cpair.object=msg;
+                cpair.removeTime=new Date(Calendar.getInstance().getTimeInMillis()+(60000*(long)TimeToLive));
+                this.cache.put(key, cpair);
+            }
         }
     }
     
@@ -563,17 +569,23 @@ public class JSHelper implements Processor {
      */
     public void cache(String key, Object msg) {
         
-        CachePair   cpair=new CachePair();
-        cpair.object=msg;
-        this.cache.put(key, cpair);
+        synchronized(this.cache)
+        {
+            CachePair   cpair=new CachePair();
+            cpair.object=msg;
+            this.cache.put(key, cpair);
+        }
     }
 
     public Object cache(String key) {
-        checkCache();
-        if(this.cache.containsKey(key))
-            return this.cache.get(key).object;
-        else
-            return null;                
+        synchronized(this.cache)
+        {
+            checkCache();
+            if(this.cache.containsKey(key))
+                return this.cache.get(key).object;
+            else
+                return null;                
+        }
     }
 
     /**
@@ -677,10 +689,11 @@ public class JSHelper implements Processor {
     public void info(String data) {
         
         org.apache.log4j.Logger screenlogger=getScreenLogger();
+        
         if(screenlogger!=null)
             screenlogger.info(data);
         else
-            logger.info(data);
+            logger.info("["+Thread.currentThread().threadId()+"]"+data);
     }
 
     
@@ -690,7 +703,7 @@ public class JSHelper implements Processor {
         if(screenlogger!=null)
             screenlogger.debug(data);
         else
-            logger.debug(data);
+            logger.debug("["+Thread.currentThread().threadId()+"]"+data);
         
     }
 
@@ -700,7 +713,7 @@ public class JSHelper implements Processor {
         if(screenlogger!=null)
             screenlogger.warn(data);
         else
-            logger.warn(data);
+            logger.warn("["+Thread.currentThread().threadId()+"]"+data);
     }
 
     public void error(String data) {
@@ -709,12 +722,13 @@ public class JSHelper implements Processor {
         if(screenlogger!=null)
             screenlogger.error(data);
         else
-            logger.error(data);
+            logger.error("["+Thread.currentThread().threadId()+"]"+data);
     }
     
     public void info(String data, Exchange e) {
         try {
             Logger logTmp = LoggerFactory.getLogger(e.getFromRouteId());
+            //logTmp.info(data);
             logTmp.info(data);
         } catch (Exception ex) {
             logger.info(data);

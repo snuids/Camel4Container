@@ -1,5 +1,7 @@
 ///Users/snuids/ICTCS/APSB/Configs
 ////Users/snuids/Documents/GitHub/Camel4Container/data/camel-context.xml
+/// 2.1.1 AMA 13Jan2026 Add synchronized keyword
+/// 2.2.0 AMA 28Jan2026 revert to Log4j v1.
 ///
 package camelworker;
 
@@ -42,7 +44,7 @@ public class CamelWorker {
     static final Logger logger = LoggerFactory.getLogger("CamelWorker");
     
     
-    public static final String version = "2.0.1";
+    public static final String version = "2.2.0";
     public static String camelVersion = "NA";    
     public static ApplicationContext context;
     public static String apsbPropertiesFile= null;
@@ -124,7 +126,7 @@ public class CamelWorker {
         }
         catch(Exception e)
         {
-            logger.info("No PubSun Dispatcher defined.");
+            logger.info("No PubSub Dispatcher defined.");
             //logger.error(e.getMessage(),e);
         }
         try {
