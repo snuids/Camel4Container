@@ -35,10 +35,16 @@ public class CamelContextLoader {
         }
 
 
-        Map<String, String> env = System.getenv();
-        for (Map.Entry<String, String> entry : env.entrySet()) {
-            System.out.println(entry.getKey() + ": " + entry.getValue());
+        // Ne pas imprimer tout l'environnement : un deploiement qui passe des identifiants par variables
+        // (base de donnees, messagerie) les ecrivait dans le journal, donc dans la collecte de logs.
+        // Seules les variables que ce runner utilise reellement sont affichees.
+        for (String name : new String[]{"workflow", "serverId", "CAMEL_WORKER_VERSION"}) {
+            if (System.getenv(name) != null) {
+                System.out.println(name + ": " + System.getenv(name));
+            }
         }
+        System.out.println("Implementation-Version: "
+                + CamelContextLoader.class.getPackage().getImplementationVersion());
 
         String path = "file:" + args[0];
         Path filePath = Paths.get(args[0]);

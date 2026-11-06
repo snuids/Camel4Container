@@ -7,7 +7,7 @@
   <groupId>snuids</groupId>
   <artifactId>camel</artifactId>
   <packaging>jar</packaging>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.2</version>
 
   <name>A Camel Spring Route</name>
 
@@ -133,6 +133,8 @@
 
   <build>
     <defaultGoal>install</defaultGoal>
+    <!-- Nom fixe : le Dockerfile copie target/app.jar, il ne doit pas suivre la version. -->
+    <finalName>app</finalName>
 
     <plugins>
       <plugin>
@@ -148,6 +150,7 @@
             </manifest>
             <manifestEntries>
               <Implementation-Build>${buildNumber}</Implementation-Build>
+              <Implementation-Version>${project.version}</Implementation-Version>
             </manifestEntries>
           </archive>
         </configuration>

@@ -1,36 +1,45 @@
 name: Build Docker Container
 
+# La version de l'image est la premiere ligne du message de commit, et rien d'autre : le tag, le
+# label OCI et la variable CAMEL_WORKER_VERSION viennent tous de cette valeur, pour que le module
+# annonce toujours la version de l'image qui tourne.
+#   v1.2                     -> snuids/camel4:v1.2
+#   v1.2 Une phrase derriere -> snuids/camel4:v1.2
+#   "juste une phrase"       -> echec, aucune image publiee
 on:
   push:
     branches:
       - main
-    # This regex checks for version numbers in the commit message
     paths-ignore:
       - '**.md'
-    # Example versioning pattern: v1.0.0
-    # Adjust the regex as needed for your versioning scheme
-    if: contains(github.event.head_commit.message, 'v')
-
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+
+      - name: Extract version
+        id: version
+        run: |
+          VERSION="$(printf '%s' "${{ github.event.head_commit.message }}" | head -n1 | tr -d '[:space:]')"
+          if ! printf '%s' "$VERSION" | grep -Eq '^v?[0-9]+\.[0-9]+(\.[0-9]+)?$'; then
+            echo "Premiere ligne du message de commit = '$VERSION' ; une version (v1.2, 1.2, 1.2.3) est attendue." >&2
+            exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Build Docker image
         run: |
-          docker build -t project:latest -f Dockerfile .
+          docker build \
+            --build-arg VERSION="${{ steps.version.outputs.version }}" \
+            --build-arg REVISION="${GITHUB_SHA::7}" \
+            -t "snuids/camel4:${{ steps.version.outputs.version }}" \
+            -f Dockerfile .
 
-      - name: Optionally push to Docker Hub
-        run: |        
-          echo "${{ github.event.head_commit.message }}"
-          echo "${{ secrets.DOCKER_USERNAME }}"  
+      - name: Push to Docker Hub
+        run: |
+          echo "image : snuids/camel4:${{ steps.version.outputs.version }} (commit ${GITHUB_SHA::7})"
           echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-          docker tag project:latest snuids/camel4:${{ github.event.head_commit.message }}
-          docker push snuids/camel4:${{ github.event.head_commit.message }}
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          docker push "snuids/camel4:${{ steps.version.outputs.version }}"
