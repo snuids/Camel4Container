@@ -19,7 +19,10 @@ RUN mvn clean install
 
 
 # Use a smaller base image for the final image
-FROM openjdk:25-jdk-slim
+# `openjdk:25-jdk-slim` n existe plus : l image officielle openjdk a ete retiree du Hub, et le
+# build echouait la-dessus (not found). Temurin 25 est un JDK complet (javac), ce dont camel-joor
+# a besoin pour compiler les expressions <java> des routes.
+FROM eclipse-temurin:25-jdk-noble
 
 # La version est celle du tag de l image, passee par la CI. Elle est a la fois un label
 # (l image se decrit elle-meme) et une variable d environnement (les routes la publient dans le
